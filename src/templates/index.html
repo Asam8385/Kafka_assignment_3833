@@ -385,15 +385,42 @@
                 startTime = new Date();
                 updateUI();
                 startUptimeCounter();
+                startPolling();  // Start polling for metrics
             } else if (data.status === 'stopped') {
                 isRunning = false;
                 startTime = null;
                 updateUI();
                 stopUptimeCounter();
+                stopPolling();  // Stop polling
             }
         });
 
-        socket.on('producer_update', (data) => {
+        // Polling for metrics
+        let pollingInterval = null;
+
+        function startPolling() {
+            if (pollingInterval) return;
+            pollingInterval = setInterval(fetchMetrics, 500);  // Poll every 500ms
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        function fetchMetrics() {
+            fetch('/api/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    updateProducerMetrics(data.producer);
+                    updateConsumerMetrics(data.consumer);
+                })
+                .catch(error => console.error('Error fetching metrics:', error));
+        }
+
+        function updateProducerMetrics(data) {
             document.getElementById('totalProduced').textContent = data.total_produced;
             document.getElementById('producerRate').textContent = data.rate.toFixed(1);
             
@@ -408,9 +435,9 @@
                     </tr>
                 `).join('');
             }
-        });
+        }
 
-        socket.on('consumer_update', (data) => {
+        function updateConsumerMetrics(data) {
             document.getElementById('totalConsumed').textContent = data.total_consumed;
             document.getElementById('successful').textContent = data.successful;
             document.getElementById('retried').textContent = data.retried;
@@ -435,7 +462,7 @@
                     `;
                 }).join('');
             }
-        });
+        }
 
         function startSystem() {
             socket.emit('start_system');

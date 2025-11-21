@@ -67,9 +67,6 @@ def producer_worker():
                 # Keep only last 10 orders
                 system_state['metrics']['producer']['orders'] = \
                     system_state['metrics']['producer']['orders'][:10]
-                
-                # Emit to frontend
-                socketio.emit('producer_update', system_state['metrics']['producer'])
         except Exception as e:
             print(f"Producer error: {e}")
         
@@ -102,9 +99,6 @@ def consumer_worker():
                 # Keep only last 10 orders
                 system_state['metrics']['consumer']['recent_orders'] = \
                     system_state['metrics']['consumer']['recent_orders'][:10]
-                
-                # Emit to frontend
-                socketio.emit('consumer_update', system_state['metrics']['consumer'])
         except Exception as e:
             print(f"Consumer error: {e}")
         
@@ -129,6 +123,12 @@ def get_status():
         'uptime': uptime,
         'metrics': system_state['metrics']
     })
+
+
+@app.route('/api/metrics')
+def get_metrics():
+    """Get current metrics - polled by frontend"""
+    return jsonify(system_state['metrics'])
 
 
 @socketio.on('start_system')

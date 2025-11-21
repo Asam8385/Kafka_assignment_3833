@@ -60,7 +60,7 @@ class OrderConsumer:
         }
         
         self.consumer = DeserializingConsumer(consumer_conf)
-        self.consumer.subscribe([self.topic, self.retry_topic])
+        self.consumer.subscribe([self.topic])  # Only subscribe to main topic
         
         # Initialize DLQ producer
         avro_serializer = AvroSerializer(
