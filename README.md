@@ -152,10 +152,10 @@ python src/dashboard.py
 ## 📊 Dashboard Screenshots
 
 ### System Running - Real-time Metrics
-![Dashboard Running](./screenshots/dashboard_running.png)
+![Dashboard Running](./screenshots/terminal-dashboard.png)
 
 ### Live Order Processing
-![Order Processing](./screenshots/order_processing.png)
+![Order Processing](./screenshots/flask.png)
 
 The dashboard displays:
 - **Producer Metrics**: Total orders produced, production rate, recent orders table
