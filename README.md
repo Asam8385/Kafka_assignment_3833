@@ -1,1 +1,0 @@
-# Kafka_assignment_3833
